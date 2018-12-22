@@ -1,0 +1,5 @@
+1. Open the message.mp3 and listen to it. Sounds like morse code.
+2. Convert the morse code. It leads to https://github.com/gooogal/xmas
+3. Open special message.txt inside the repo
+4. The second part of the message is a rot13 encoded string.
+5. Of the decoded string only take the uppercase letters and put them inside X-MAS{} .

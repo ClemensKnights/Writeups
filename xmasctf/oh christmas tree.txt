@@ -1,0 +1,2 @@
+1. Execute "strings Merry\ Christmas.jpg | less
+2. Flag is split over a few lines at the top.

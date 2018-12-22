@@ -1,0 +1,4 @@
+1. Mount the .img
+2. Inside the image there is a hidden folder .Trash-0
+3. Inside the files folder there are a bunch of .png files
+4. Open them all and assemble them. In the image there is the flag.
