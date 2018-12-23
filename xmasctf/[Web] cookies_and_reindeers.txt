@@ -9,7 +9,7 @@ After someone told me that you could base64-decode the cookiez-cookie three time
 
 	{"id":"2","type":"guest"}
 
-I changed the type to "admin", encoded it again three times and got presented a new element on the website:
+I changed the type to "admin", encoded it again three times, set the cookie and got presented a new element on the website:
 
 	<h1 mywrongadminpass class='wrong'>You got the admin password wrong :c<br></h1</h1>
 

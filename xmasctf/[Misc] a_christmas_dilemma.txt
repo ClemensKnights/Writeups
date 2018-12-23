@@ -15,7 +15,7 @@ Since you had to guess the maximum pretty precisely, it was not enough to return
 Instead, because we only had linear functions, we just decided to take the two functions that probably lead to the maximum (or at least the maximum value that we found), take two points from each function and compute the parameters of the functions. After that it was really easy to compute the intersection between the two functions and return it to get the flag:
 X-MAS{Th4nk5_for_m4k1ng_a_ch1ld_h4ppy_th1s_Chr1stma5}
 
-Here is the code, I also left some debug inputs in there for better understanding (still sorry for python2, my pwnlib on python3 was still broken):
+Here is the code, I also left some debug inputs in there for better understanding:
 
 	from pwn import *
 	from hashlib import md5
