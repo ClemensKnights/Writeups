@@ -1,32 +1,33 @@
 You are provided a standard elf binary called "client" that you are supposed to use to connect to the challenge.
 If you do ./client 199.247.6.180 you are presented a text-based version of tic-tac-toe.
 
-|X|O| |
-|O|O|X|
-|X| | |
+	|X|O| |
+	|O|O|X|
+	|X| | |
 
 You can set your cross by pressing space, if you lose, you can play another round by pressing enter but if you tie, you get this:
 
-|/|h|o|
-|m|e|/|
-|c|t|f|
+	|/|h|o|
+	|m|e|/|
+	|c|t|f|
 
 If you then press q, you get a segmentation fault.
-You can monitor the network traffic really easily with wireshark and will find out that the port is 11000.
+But this is all just deliberately misleading.
+Instead you can monitor the network traffic really easily with wireshark and will find out that the port is 11000.
 The network traffic follows an easy pattern:
 
-ff 58 20 20 20 20 20 20 20 20 a7 (example for first move)
-58 4f 20 20 20 20 20 20 20	 (example for bots next move)
-ff 58 4f 20 58 20 20 20 20 20 b0 (example for your next move)
+	ff 58 20 20 20 20 20 20 20 20 a7 (example for first move)
+	58 4f 20 20 20 20 20 20 20	 (example for bots next move)
+	ff 58 4f 20 58 20 20 20 20 20 b0 (example for your next move)
 
 The only unexpected part is the start/end of your data. The ending switches between a7 and b0 for every move.
 You quickly realize that you cannot win because the bot does not let you, but, as the challenge description already suggests, cheating is an option.
 So if you only send a winning move like so:
 
-from pwn import *
-r = remote("199.247.6.180",11000)
-r.sendline(b"\xffXXX      \xa7")
-r.interactive()
+	from pwn import *
+	r = remote("199.247.6.180",11000)
+	r.sendline(b"\xffXXX      \xa7")
+	r.interactive()
 
 you get the flag. The flag speaks for itself
 X-MAS{cl13n7_v4l1d4710n_5uck5____}

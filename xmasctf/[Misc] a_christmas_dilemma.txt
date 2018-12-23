@@ -1,0 +1,94 @@
+After connecting and solving a captcha, you are presented with this:
+
+	This Christmas' dilemma is:
+	Given a random function defined in range (-12, 148) find the global maximum of the function!
+	You can send at most 501 queries including guesses.
+	The guessed value must be equal to the real answer up to 2 decimals.
+	
+	Choose your action:
+	[1] Query the value of the function at some point
+	[2] Guess the global maximum
+
+So our (I did this challenge together with Philipp) first guess was to just query really many linspaced values and look at what these "random functions" look like with matplotlib.
+It quickly became clear that they were always several linear functions on after another, thats also why all my attemps on interpolation failed.
+Since you had to guess the maximum pretty precisely, it was not enough to return the maximum of all the values that you found.
+Instead, because we only had linear functions, we just decided to take the two functions that probably lead to the maximum (or at least the maximum value that we found), take two points from each function and compute the parameters of the functions. After that it was really easy to compute the intersection between the two functions and return it to get the flag:
+X-MAS{Th4nk5_for_m4k1ng_a_ch1ld_h4ppy_th1s_Chr1stma5}
+
+Here is the code, I also left some debug inputs in there for better understanding (still sorry for python2, my pwnlib on python3 was still broken):
+
+	from pwn import *
+	from hashlib import md5
+	from numpy import arange
+	import matplotlib.pyplot as plt
+	
+	r = remote("199.247.6.180",14001)
+	print(r.recvuntil("="))
+	searchfor = r.recvuntil(".")[:-1]
+	print(searchfor)
+	
+	i = 0
+	while True: # compute captcha
+	    dig = md5(hex(i)).hexdigest()
+	    if dig[:5] == searchfor:
+	        print "SUCCESS"
+	        print hex(i)
+	        break
+	    i += 1
+	
+	r.sendline(hex(i))
+	
+	print(r.recvuntil("("))
+	
+	start = int(r.recvuntil(",")[:-1])
+	end = int(r.recvuntil(")")[:-1])
+	
+	fun_range = end - start
+	step = fun_range / 450.0
+	
+	print start
+	print end
+	print step
+	
+	indizes = list(arange(start,end,step))
+	
+	values = []
+	
+	for ind, i in enumerate(indizes): # collect all values
+	    print ind
+	    r.recvuntil("maximum")
+	    r.sendline("1")
+	    r.sendline(str(i))
+	    r.recvuntil("= ")
+	    values += [float(r.recvuntil("\n").strip())]
+	
+	print max(values)
+	
+	max_ind = values.index(max(values))
+	max_x = indizes[max_ind]
+	max_y = max(values)
+	
+	delta_x_1 = indizes[max_ind - 1] - indizes[max_ind - 2]
+	delta_x_2 = indizes[max_ind + 2] - indizes[max_ind + 1]
+	delta_y_1 = values[max_ind - 1] - values[max_ind - 2]
+	delta_y_2 = values[max_ind + 2] - values[max_ind + 1]
+	
+	m1 = delta_y_1 / delta_x_1
+	m2 = delta_y_2 / delta_x_2
+	
+	t1 = values[max_ind - 1] - m1 * indizes[max_ind - 1]
+	t2 = values[max_ind + 1] - m2 * indizes[max_ind + 1]
+	
+	x = (t2 - t1) / (m1 - m2) # x value of intersection
+	y = m1 * x + t1 # y value of intersection
+	
+	print x
+	print y
+	
+	plt.plot(indizes, values, 'ro') # take a last look at what the random functions looked like
+	plt.show()
+	
+	r.sendline("2")
+	r.sendline(str(y))
+	
+	r.interactive() # yay

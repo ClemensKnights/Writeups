@@ -1,0 +1,14 @@
+After connecting via nc and solving a captcha, you are presented with this:
+
+	Hello, litlle one! This time the challenge is very random!
+	You will be asked 25 questions where you are given the first 30 terms of a random integer sequence and you will have to determine the next term of that sequence!
+	Let's start!
+	
+	Question number 1!
+	Here's the sequence:
+	[1, 1, 1, 0, 3, 1, 0, 3, 6, 1, 0, 0, 15, 10, 1, 0, 0, 15, 45, 15, 1, 0, 0, 0, 105, 105, 21, 1, 0, 0]
+	input an integer:
+
+The next step is that you go on oeis.org, copy and paste the sequence that you got into the search bar and from the first result copy the next number in the sequence into nc.
+Repeat 25 times and get the flag:
+X-MAS{OEIS_1s_S4n7a5_f4v0urit3_w3bs1t3}

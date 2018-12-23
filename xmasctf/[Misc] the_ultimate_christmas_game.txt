@@ -1,0 +1,80 @@
+After connecting with nc and solving a captcha, you are presented with this:
+
+	Help Santa win this game against one of his gnomes!
+	The rules are simple, choose a non-empty pile of stone and remve from it a positive number of stones.
+	The player who takes the last stone wins!
+	You start.
+	Current state of the game: [81, 12, 42, 40, 93, 52, 99, 94, 40, 89, 25, 58, 65, 51, 36]
+
+After playing around with it for a while, my first strategy was remove all piles except the last three, just to have some better overview.
+My goal was to pick the last pile with the last stone on it and I thought that could not be so hard. But the gnome always had the perfect strategy and I just could not win.
+I tried to reverse his strategies but quickly found out that he is always one step ahead somehow and that I could not defeat him that way.
+After discussing the problem for a while with Philipp he mentioned that this type of game seems familiar to him.
+So after some little bit of research we found that the game we were looking for was called "Nim" (https://en.wikipedia.org/wiki/Nim).
+Wikipedia, next to some very detailed description on how to win this game from the mathematical side, also offered a code snippet in python (how convenient):
+
+	from __future__ import print_function
+	from __future__ import division
+	
+	import functools
+	
+	def nim(heaps):
+	    nim_sum = functools.reduce(lambda x, y: x ^ y, heaps)
+	    if nim_sum == 0:
+	        return "You will lose :("
+	
+	    # Calc which move to make
+	    for index, heap in enumerate(heaps):
+	        target_size = heap ^ nim_sum
+	        if target_size < heap:
+	            amount_to_remove = heap - target_size
+	            return index, amount_to_remove
+
+This function takes all the heaps, somehow computes your "nim sum" and your game state and gives you your optimal next move in case you are in the winning state.
+So with after copying the code the solution was not so hard anymore (sorry 4 python2, my pwntools was broken on python3):
+
+	import json
+	from pwn import *
+	from hashlib import md5
+	from nim import nim
+	
+	r = remote("199.247.6.180",14002)
+	print(r.recvuntil("="))
+	searchfor = r.recvuntil(".")[:-1]
+	print(searchfor)
+	
+	i = 0
+	while True: # solve the captcha
+	    dig = md5(hex(i)).hexdigest()
+	    if dig[:5] == searchfor:
+	        print "SUCCESS"
+	        print hex(i)
+	        break
+	    i += 1
+	
+	r.sendline(hex(i))
+	print r.recvuntil("game: ")
+	pile = json.loads(r.recvuntil("]"))
+	print pile
+	print r.recvuntil("pile:")
+	
+	i = 0
+	while True:
+	    idx, amo = nim(pile) # compute next move
+	    print str(idx) + " " + str(amo)
+	    r.sendline(str(idx))
+	    print r.recvuntil("quantity:")
+	    r.sendline(str(amo))
+	    iswin = r.recvuntil(":")
+	    if "flag" in iswin:
+	        r.interactive()
+	    print r.recvuntil(":")
+	    print r.recvuntil(":")
+	    pile = json.loads(r.recvuntil("]")) # parse gnomes next move
+	    print pile
+	    print r.recvuntil(":")
+	
+	r.close()
+
+The holyshitlong flag also confirms our strategy and even tells us why we won so easily in the end:
+X-MAS{If_y0u_st4rt_1n_a_w1nn1ng_posit1on_0f_NIM_4nd_th3_ch4ll3ng3_15_wr1t7en_c0rr3ctly_then_you_c4n_4lways_w1n}

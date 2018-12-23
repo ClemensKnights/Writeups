@@ -1,0 +1,44 @@
+On the website for this challenge there is not much to see. You see a picture of a cookie and a background picture of reindeers, both from stock photo sites.
+But as the name clearly suggests, this is about cookies, so take a look at the cookies and find two:
+
+	adminpass: MyLittleCookies%21
+	cookiez: WlhsS2NGcERTVFpKYWtscFRFTktNR1ZZUW14SmFtOXBXak5XYkdNelVXbG1VVDA5
+
+Since I did not really know what to do with these at first, I looked through the pictures on the stock photos sites, just to click through over 100 pictures of cookies without finding a hint.
+After someone told me that you could base64-decode the cookiez-cookie three times and get this JSON structure:
+
+	{"id":"2","type":"guest"}
+
+I changed the type to "admin", encoded it again three times and got presented a new element on the website:
+
+	<h1 mywrongadminpass class='wrong'>You got the admin password wrong :c<br></h1</h1>
+
+I eventually asked milkdrop what the defective </h1 means, but he confirmed that it was a bug.
+You could even inject XSS since your admin password would always be injected as an html attribute as seen above.
+But this was all just very misleading since the better idea was to look at the challenge description:
+
+	You cannot cmp any cookie with Santa's cookies.
+
+Since most of the challenges were powered by PHP, I did some research on PHP comparison bugs and found horrible stuff about lose comparison and type juggling.
+In the official PHP documentation for strcmp http://php.net/manual/de/function.strcmp.php I found a comment (between the many that showed the many bugs of this function) that said the following:
+
+	Vulnerability (in PHP >=5.3) :
+
+	<?php
+	if (strcmp($_POST['password'], 'sekret') == 0) {
+	    echo "Welcome, authorized user!\n";
+	} else {
+	    echo "Go away, imposter.\n";
+	}
+	?>
+	
+	$ curl -d password[]=wrong http://andersk.scripts.mit.edu/strcmp.php
+	Welcome, authorized user!
+
+In PHP if you (by accident or on purpose) compare different types (this is called type juggling) with lose comparison (and not with strict, ===), you can get some pretty unexpected results.
+So if you set the adminpass cookie to
+
+	adminpass[]: whatever
+
+The comparison is automatically evaluated to true and you get your flag:
+X-MAS{S4n74_L0v35__C00kiesss_And_Juggl1ng!}
