@@ -102,7 +102,7 @@ Again, there is a ZIP file attached to the image. After extracting, we get the `
 
 We can see that this is yet another PNG file (e.g. through the `profile type exif` and `zTXt` markers), but with a corrupted header. Fixing the reversed magic bytes (`GNP` at the start to `PNG`) and header chunk name (`RDHI` to `IHDR`) gives us the password for the next stage, `sternocleidomastoidian`:
 
-![`cat_final` after fixing](https://raw.githubusercontent.com/ClemensKnights/Writeups/master/xmasctf/mission-save-the-christmas/images/cat_fixed.jpg)
+![`cat_final` after fixing](https://raw.githubusercontent.com/ClemensKnights/Writeups/master/xmasctf/mission-save-the-christmas/images/cat_fixed.png)
 
 #### Stage 5: Image forensics, part 2 (Merry Christmas)
 
