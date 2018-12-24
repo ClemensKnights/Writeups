@@ -1,0 +1,19 @@
+The given file was obviously a reversed mp3 audio file. After reversing, we could hear an electronic voice telling us: 
+"Dear CTF player, you have solved .... [some previous challenges] ... but now Santa is taken hostage"
+After this welcoming Intro, the voice told us the following three coordinates:
+
+A (511 716 656 388 765 455 430 016 138 955 706 839 007 890 052 532,
+  001 622 805 609 316 535 864 254 436 412 730 925 222 158 623 332 074)
+ 
+B (390 390 142 500 834 541 752 332 649 936 545 354 218 395 003 257,
+   176 460 719 206 642 987 153 469 086 794 475 382 972 064 519 404)
+
+C (608 097 554 835 704 767 294 367 078 594 102 923 662 585 120 876,
+   195 121 033 653 477 539 025 103 641 752 423 493 583 135 321 761)
+   
+The last information that was given by the voice was to find the point of "complete equilibrium" (which means we have to find the centroid of the triangle)
+M = (A+B+C) / 3
+Et voilá: M, having its X and Y parts concatenated and this number reinterpreted as chars, provide us with the flag:
+X-MAS{An4ly71c_G30m3try_S4v3d_Chr157m4s}
+
+I know, you think this challenge had to be really easy. Well it was. The only struggle was that the electronic voice was not easy to understand.
